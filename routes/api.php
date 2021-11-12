@@ -2,6 +2,7 @@
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Api\OTPRequestController;
+use App\Http\Controllers\Api\OTPVerificationController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -20,3 +21,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 });
 
 Route::post('otp', [OTPRequestController::class, 'store']);
+Route::post('verify', [OTPVerificationController::class, 'verify']);

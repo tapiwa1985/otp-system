@@ -62,12 +62,12 @@ class OTPRequestController extends Controller
     {
         $otpWithinWindow = $this->otpRepository->getGeneratedOtpWithinNoResetWindow($userId);
         if ($otpWithinWindow) {
-            $newExpiryTime = Carbon::parse($otpWithinWindow->expires_at)->addSeconds(config('app.otp_ttl'));
+            $newExpiryTime = Carbon::parse($otpWithinWindow->expires_at)->addSeconds(config('values.otp_ttl'));
             $this->otpRepository->refreshOtp($otpWithinWindow->id, $newExpiryTime);
             return $otpWithinWindow->otp;
         }
         $newOtp = $this->generateValidOtpWithinLastDay($userId);
-        $this->otpRepository->create($userId, $newOtp, Carbon::now()->addSeconds(config('app.otp_ttl')));
+        $this->otpRepository->create($userId, $newOtp, Carbon::now()->addSeconds(config('values.otp_ttl')));
 
         return $newOtp;
     }
