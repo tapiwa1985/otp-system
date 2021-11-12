@@ -1,0 +1,53 @@
+version: '2'
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8000"
+    volumes:
+      - .:/app
+    env_file: .env
+    working_dir: /app
+    command: bash -c 'php artisan config:cache && php artisan serve --host 0.0.0.0'
+    depends_on:
+      - db
+    links:
+      - db
+  db:
+    image: postgres:13
+    volumes:
+      - "./sourcefiles/postgres:/var/lib/postgresql/data"
+    environment:
+      - POSTGRES_USER=${DB_USERNAME}
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=${DB_DATABASE}
+    ports:
+      - "5432:5432"
+
+  mailhog_server:
+    image: mailhog/mailhog
+    container_name: cliqtech_mailhog_server
+    tty: true
+    ports:
+      - '1025:1025'
+      - '8025:8025'
+    #restart: always
+    restart: on-failure
+    #set the same network as the other services
+
+  pgadmin:
+    image: dpage/pgadmin4:4.18
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@linuxhint.com
+      PGADMIN_DEFAULT_PASSWORD: secret
+      PGADMIN_LISTEN_PORT: 83
+    ports:
+      - "8000:83"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmins
+    links:
+      - "db:pgsql-server"
+volumes:
+  db-data:
+  pgadmin-data:
